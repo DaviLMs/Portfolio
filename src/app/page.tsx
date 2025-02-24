@@ -1,101 +1,175 @@
-import Image from "next/image";
+'use client'
+import Bar from "@/componentes/Bar"
+import backgroundImg from '../Image/wallpaper.webp'
+import { useEffect, useRef, useState } from "react";
+import backgroundImG2 from '../Image/wallpaper.jpeg'
+import escudo from '../Image/escudo.webp'
+import MovieClip from '../componentes/MovieClip'
+import folha from '../Image/folha.jpg'
+import { ProgressBar } from 'primereact/progressbar';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  
+  const [comentario, setComentarios] = useState();
+  
+  const textos = [
+    "Davi Lamarca é um desenvolvedor apaixonado por tecnologia, com experiência em JavaScript, TypeScript, Node.js, React Native e desenvolvimento web.",
+    "Com foco em criar soluções eficientes e escaláveis, está começando sua jornada no mundo da programação, buscando sempre aprender e melhorar suas habilidades.",
+    "Davi se dedica a construir interfaces intuitivas e a trabalhar com BFF, conectando sistemas para oferecer experiências excepcionais aos usuários."
+  ];
+  
+  const [indiceTexto, setIndiceTexto] = useState(0);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  async function comentarios() {
+    const request = await fetch('https://dummyjson.com/comments');
+    const response = await request.json();
+    console.log(response);
+    setComentarios(response);
+  }
+
+  useEffect(() => {
+    comentarios();
+  }, []);
+  
+  const tec = ['Javascript', 'NodeJS', 'React Js', 'React Native'];
+  const sectionRef = useRef<HTMLDivElement>(null); 
+
+  const scrollToSection = () => {
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({
+        behavior: 'smooth', 
+        block: 'start', 
+      });
+    }
+  };
+
+  const Typewriter = ({ texto, delay }: { texto: string, delay: number }) => {
+    const [currentText, setCurrentText] = useState('');
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+      if (currentIndex < texto.length) {
+        const timeout = setTimeout(() => {
+          setCurrentText((prevText) => prevText + texto[currentIndex]);
+          setCurrentIndex((prevIndex) => prevIndex + 1);
+        }, delay);
+        return () => clearTimeout(timeout);
+      }
+      
+      if (currentIndex === texto.length && indiceTexto < textos.length - 1) {
+        setTimeout(() => {
+          setIndiceTexto(indiceTexto + 1); 
+        }, 2500); 
+        if (currentIndex === textos.length) {
+          setTimeout(() => {
+      setIndiceTexto((prev) => (prev + 1) % textos.length)
+          }, 2500)
+          setCurrentText('')
+          setCurrentIndex(0)
+        }
+      }
+    }, [currentIndex, delay, texto, indiceTexto]);
+
+    return <span>{currentText}</span>;
+  };
+
+  return (
+    <>
+        <div 
+          style={{
+            backgroundImage: `url(${backgroundImg.src})`, 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            height: '90vh',
+          position: 'relative',
+            borderRadius: 100
+          }}
+        >
+          <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
+            <section style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 300 }}>
+              <div style={{ height: '120px', display: 'flex', flexDirection: 'row', gap: 25 }}>
+                <h2 style={{ fontSize: 40, fontFamily: 'monospace' }}>Olá, me chamo </h2>
+                <h2 style={{ fontSize: 40, color: '#fdf6b3', fontFamily: 'monospace' }}>Davi Lamarca!</h2>
+              </div>
+              <div style={{ height: '120px', width: '500px', display: 'flex', flexDirection: 'row', gap: 15, textAlign: 'center', alignItems: 'center' }}>
+                <h2 style={{ fontSize: 25, color: '#fdf6b3', fontFamily: 'monospace' }}>
+                <Typewriter texto={textos[indiceTexto]} delay={40} />
+                
+              </h2>
+              
+            </div>
+            
+            </section>
+          </main>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div 
+          style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: '20px', 
+            gap: 20,   
+            backgroundImage: `url(${backgroundImG2.src})`, 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            height: '50vh',
+            position: 'relative',
+          }}
+      >
+
+          <h2 style={{ textAlign: 'center', fontSize: 25, fontFamily: 'monospace', color: '#fff9c1' }}>Principais tecnologias</h2>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {tec.map((valor, index) => (
+              <li key={index} style={{ fontSize: 25, color: '#fff', marginBottom: '10px', fontFamily:'monospace', textAlign:"center" }}>
+                {valor}
+              </li>
+            ))}
+        </ul>
+        <div >
+        </div>
+
+        </div>
+        <div style={{ alignContent: "center", display: 'flex', flexDirection: "row", gap: 500, justifyContent: "center", alignSelf: 'center', marginTop: 50 }}>
+  <div style={{ display: "flex", flexDirection: "column", width: 250, gap: 10 }}>
+    <h1 style={{ textAlign: 'center', fontWeight: "bold", fontSize: 25, color: '#fff493' }}>Segurança</h1>
+    <p style={{ textAlign: 'center',fontSize: 20 }}>
+      Sim, todos os sites que desenvo lvo são projetados com  <span style={{ color: '#fff493', fontWeight: 'bold' }}>segurança</span> em mente. Eu tomo medidas rigorosas para proteger os dados dos usuários e evitar qualquer tipo de ataque, garantindo que eles possam navegar de forma segura.
+    </p>
+  </div>
+  <div style={{ display: "flex", flexDirection: "column", width: 250, gap: 10 }}>
+    <h1 style={{ textAlign: 'center', fontWeight: "bold", fontSize: 25, color: '#fff493' }}>Designer</h1>
+    <p style={{ textAlign: 'center', fontSize: 20 }}>
+      Um design bonito também precisa ser funcional. Meus projetos são feitos com foco na experiência do usuário <span style={{ color: '#fff493', fontWeight: "bold" }}>(UX)</span>, garantindo que o design seja intuitivo e fácil de navegar. Cada elemento é pensado para ajudar os usuários a encontrarem o que precisam de forma eficiente e simples.
+    </p>
     </div>
+      </div>
+      <h2 style={{textAlign: 'center', fontSize: 24, fontWeight: 'bold', marginTop: 100}}>Video</h2>
+      <div style={{ backgroundColor: '#000000', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+<MovieClip />
+      </div>
+
+        <div style={{ height: '30vh', backgroundColor: '#000000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}></div>
+      <Bar />
+      <div 
+          style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: '20px', 
+            gap: 20,   
+            backgroundImage: `url(${folha.src})`, 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            height: '30vh',
+          position: 'relative',
+            borderRadius: 100
+          }}
+        >
+          
+        </div>
+    </>
   );
 }
